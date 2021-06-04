@@ -6,14 +6,14 @@
 <%- include('../includes/nav.ejs') %> 
 </header>
 <main>
-  <form class="product-form" action="/admin/<%- isEdited ? 'edit' : 'add' %>-product" method="POST">
+  <form class="product-form" action="/admin/<%= isEdited ? 'edit' : 'add' %>-product" method="POST">
     <div class="form-control">
       <label for="title">Title</label>
-      <input  type="text" name="title" value="<%= isEdited ? product.title : '' %>">
+      <input type="text" name="title" value="<%= isEdited ? product.title : '' %>">
     </div>
     <div class="form-control">
       <label for="imageUrl">Image Url</label>
-      <input  type="text" name="imageUrl"  value="<%= isEdited ? product.productId : '' %>">
+      <input type="text" name="imageUrl"  value="<%= isEdited ? product.productId : '' %>">
     </div>
     <div class="form-control">
       <label for="description">Description</label>
@@ -21,12 +21,12 @@
     </div>
     <div class="form-control">
       <label for="price">Price</label>
-      <input  type="number" name="price" step="0.01" value="<%= isEdited ? product.price : '' %>">
+      <input type="number" name="price" step="0.01" value="<%= isEdited ? product.price : '' %>">
     </div>
     <% if (isEdited) { %>
-    <input  type="hidden" name="productId">
+    <input type="hidden" name="productId" value="<%= product.productId %>">
     <% } %>
-    <button type="submit"><% isEdited ? 'Edit product' : 'Add product'%></button>
+    <button type="submit"><%= isEdited ? 'Edit product' : 'Add product'%></button>
   </form>
 </main>
 <%- include('../includes/end.ejs') %> 

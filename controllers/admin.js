@@ -8,6 +8,24 @@ exports.getAddProduct = (req, res) => {
   });
 };
 
+exports.postAddProduct = (req, res) => {
+  const { title } = req.body;
+  const { imageUrl } = req.body;
+  const { description } = req.body;
+  const { price } = req.body;
+
+  const product = new Product({
+    title,
+    imageUrl,
+    description,
+    price,
+    productId: null,
+  });
+
+  product.save();
+  res.redirect('/');
+};
+
 exports.getEditProduct = (req, res) => {
   const editMode = req.query.edit;
   const { productId } = req.params;
@@ -42,25 +60,13 @@ exports.postEditProduct = (req, res) => {
   });
 
   updatedProduct.save();
-  res.redirect('/');
+  res.redirect('/admin/product-list');
 };
 
-exports.postAddProduct = (req, res) => {
-  const { title } = req.body;
-  const { imageUrl } = req.body;
-  const { description } = req.body;
-  const { price } = req.body;
-
-  const product = new Product({
-    title,
-    imageUrl,
-    description,
-    price,
-    productId: null,
-  });
-
-  product.save();
-  res.redirect('/');
+exports.postDeleteProduct = (req, res) => {
+  const { productId } = req.body;
+  Product.deleteById(productId);
+  res.redirect('/admin/product-list');
 };
 
 exports.getProducts = (req, res) => {
