@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const Product = require('../models/product');
 const Cart = require('../models/cart');
 
@@ -37,9 +36,24 @@ exports.getIndex = (req, res) => {
 };
 
 exports.getCart = (req, res) => {
-  res.render('shop/cart', {
-    pageTitle: 'Your Cart',
-    path: '/cart',
+  Cart.getCart((cart) => {
+    Product.fetchAll((products) => {
+      const cartProducts = [];
+
+      products.forEach((product) => {
+        const cartProductData = cart.products
+          .find((cartProd) => cartProd.productId === product.productId);
+        if (cartProductData) {
+          cartProducts.push({ product, quantity: cartProductData.quantity });
+        }
+      });
+
+      res.render('shop/cart', {
+        pageTitle: 'Your Cart',
+        path: '/cart',
+        cartProducts,
+      });
+    });
   });
 };
 
@@ -49,4 +63,12 @@ exports.postCart = (req, res) => {
     Cart.addProduct(productId, product.price);
   });
   res.redirect('/cart');
+};
+
+exports.postDeleteCartProduct = (req, res) => {
+  const { productId } = req.body;
+  Product.findById(productId, (product) => {
+    Cart.deleteProduct(productId, product.price);
+    res.redirect('/cart');
+  });
 };

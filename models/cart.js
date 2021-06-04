@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
@@ -22,7 +23,7 @@ class Cart {
         updatedProduct = { ...existingProduct };
         updatedProduct.quantity += 1;
         cart.products = [...cart.products];
-        cart.products[existingProductIndex] = existingProduct;
+        cart.products[existingProductIndex] = updatedProduct;
       } else {
         updatedProduct = { productId: id, quantity: 1 };
         cart.products = [...cart.products, updatedProduct];
@@ -30,7 +31,7 @@ class Cart {
       cart.totalPrice += +productPrice;
 
       fs.writeFile(cartPath, JSON.stringify(cart), (err) => {
-        console.log(err, 'err ADD');
+        console.log(err);
       });
     });
   }
@@ -43,15 +44,20 @@ class Cart {
       const updatedCart = { ...JSON.parse(data) };
       const product = updatedCart.products.find((prod) => prod.productId === id);
       const { quantity } = product;
-      updatedCart.products = updatedCart.products.filter((prod) => {
-        console.log(prod.productId, id, 'ids');
-        return prod.productId !== id;
-      });
+      updatedCart.products = updatedCart.products.filter((prod) => prod.productId !== id);
       updatedCart.totalPrice -= productPrice * quantity;
 
       fs.writeFile(cartPath, JSON.stringify(updatedCart), (err) => {
-        console.log(err, 'DELETE CART');
+        console.log(err);
       });
+    });
+  }
+
+  static getCart(callback) {
+    fs.readFile(cartPath, (err, data) => {
+      if (err) return callback(null);
+      const cart = JSON.parse(data);
+      return callback(cart);
     });
   }
 }

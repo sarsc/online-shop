@@ -4,5 +4,21 @@
   <link rel="stylesheet" href="/css/main.css">
 </header>
 <body>
+  <div>
+    <% if (cartProducts.length > 0) { %>
+      <% cartProducts.forEach(cartProduct => { %>
+        <p>
+          <%= cartProduct.product.title %> 
+        </p>
+        <p>
+          <%= cartProduct.quantity %>
+        </p>
+        <form action="/delete-cart-item" method="POST" >
+          <input type="hidden" name="productId" value="<%= cartProduct.product.productId %>">
+          <button type="submit" class="btn">Delete</button>
+        </form>
+      <% }) %>
+    <% } %>
+  </div>
 <%- include('../includes/end.ejs') %>
   

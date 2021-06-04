@@ -33,13 +33,13 @@ class Product {
         const updatedProducts = [...products];
         updatedProducts[existingProductIndex] = this;
         fs.writeFile(productPath, JSON.stringify(updatedProducts), (err) => {
-          console.log(err, 'err SAVE');
+          console.log(err);
         });
       } else {
         this.productId = Math.random().toString();
         products.push(this);
         fs.writeFile(productPath, JSON.stringify(products), (err) => {
-          console.log(err, 'err SAVE');
+          console.log(err);
         });
       }
     });
