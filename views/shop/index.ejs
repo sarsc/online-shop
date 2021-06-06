@@ -1,8 +1,33 @@
 <%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/product.css">
 </head>
-<%- include('../includes/nav.ejs') %>
-  <link rel="stylesheet" href="/css/main.css">
-</header>
 <body>
-  <h1>SHOP</h1>
-<%- include('../includes/end.ejs') %>
+  <%- include('../includes/nav.ejs') %> 
+  </header>
+  <main>
+    <h1>List of products</h1>
+    <% if (products.length > 0) { %>
+      <% products.forEach(product => { %>
+        <div class="grid">
+          <article class="card product-item">
+             <header class="card__header">
+                 <h1 class="product__title"><%= product.title %></h1>
+             </header>
+             <div class="card__image">
+                 <img src="<%= product.imageUrl%>" alt="A Book">
+             </div>
+             <div class="card__content">
+                 <h2 class="product__price"><%= product.price %></h2>
+                 <p class="product__description"><%= product.description %></p>
+             </div>
+             <div class="card__actions">
+              <a class="btn" href="/product-list/<%= product.productId %>">Details</a>
+              <%- include('../includes/add-to-cart.ejs', { product }) %>
+            </div>
+           </article>
+        </div>
+    <% }) %>
+    <% } %>
+  </main>
+<%- include('../includes/end.ejs') %> 

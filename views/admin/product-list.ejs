@@ -6,8 +6,8 @@
   </header>
   <main>
     <h1>List of products</h1>
-    <% if (hasProducts) { %>
-      <% prods.forEach(product => { %>
+    <% if (products.length > 0) { %>
+      <% products.forEach(product => { %>
         <div class="grid">
           <article class="card product-item">
              <header class="card__header">

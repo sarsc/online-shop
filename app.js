@@ -1,22 +1,27 @@
+/* eslint-disable no-console */
 const path = require('path');
 
 const express = require('express');
 const bodyPareser = require('body-parser');
 
+const sequelize = require('./utils/database');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const errorsController = require('./controllers/errors');
 
 const app = express();
 
-const errorsController = require('./controllers/errors');
+app.set('view engine', 'ejs');
 
-app.set('view engine', 'ejs')
-
-app.use(bodyPareser.urlencoded({extended: false}));
-app.use(express.static(path.join(__dirname, 'public'))) //forword request to public folder
+app.use(bodyPareser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public'))); // forword request to public folder
 
 app.use('/admin', adminRoutes.routes);
 app.use(shopRoutes);
 app.use('/', errorsController.get404);
 
-app.listen(3000);
+sequelize.sync().then((res) => {
+  // console.log(res);
+  app.listen(3000);
+})
+  .catch((err) => console.log(err));
