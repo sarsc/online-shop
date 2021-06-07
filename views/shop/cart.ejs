@@ -5,19 +5,24 @@
 </header>
 <body>
   <div>
-    <% if (cartProducts.length > 0) { %>
-      <% cartProducts.forEach(cartProduct => { %>
+    <% if (products.length > 0) { %>
+      <% products.forEach(product => { %>
         <p>
-          <%= cartProduct.product.title %> 
+          <%= product.title %> 
         </p>
         <p>
-          <%= cartProduct.quantity %>
+          <%= product.cartItem.quantity %>
         </p>
         <form action="/delete-cart-item" method="POST" >
-          <input type="hidden" name="productId" value="<%= cartProduct.product.productId %>">
+          <input type="hidden" name="productId" value="<%= product.productId %>">
           <button type="submit" class="btn">Delete</button>
         </form>
       <% }) %>
+      <form action="/create-order" method="POST">
+        <button type="submit">Order now</button>
+      </form>
+    <% } else  { %>
+      <p>Cart is empty</p>
     <% } %>
   </div>
 <%- include('../includes/end.ejs') %>

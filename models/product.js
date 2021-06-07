@@ -1,8 +1,6 @@
-/* eslint-disable no-console */
 const Sequelize = require('sequelize');
 
 const sequelize = require('../utils/database');
-// const Cart = require('./cart');
 
 const Product = sequelize.define('product', {
   productId: {

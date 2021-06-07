@@ -15,14 +15,16 @@ exports.postAddProduct = (req, res) => {
   const { imageUrl } = req.body;
   const { description } = req.body;
   const { price } = req.body;
-  Product.create({
+
+  req.user.createProduct({
     title,
     imageUrl,
     description,
     price,
-  }).then(() => {
-    res.redirect('/admin/product-list');
   })
+    .then(() => {
+      res.redirect('/admin/product-list');
+    })
     .catch((err) => console.log(err));
 };
 
@@ -30,8 +32,10 @@ exports.getEditProduct = (req, res) => {
   const editMode = req.query.edit;
   const { productId } = req.params;
 
-  Product.findByPk(productId)
-    .then((product) => {
+  req.user.getProducts({ where: { userId: productId } })
+    .then((products) => {
+      const product = products[0];
+
       if (product) {
         return res.render('admin/edit-product', {
           pageTitle: 'Edit Product',
@@ -40,7 +44,7 @@ exports.getEditProduct = (req, res) => {
           product,
         });
       }
-      return res.redirect('/');
+      res.redirect('/');
     })
     .catch((err) => console.log(err));
 };
@@ -53,6 +57,7 @@ exports.postEditProduct = (req, res) => {
     description,
     price,
   } = req.body;
+
   Product.findByPk(productId)
     .then((product) => {
       product.title = title;
@@ -70,6 +75,7 @@ exports.postEditProduct = (req, res) => {
 
 exports.postDeleteProduct = (req, res) => {
   const { productId } = req.body;
+
   Product.findByPk(productId)
     .then((product) => product.destroy())
     .then(() => {
@@ -79,13 +85,11 @@ exports.postDeleteProduct = (req, res) => {
 };
 
 exports.getProducts = (req, res) => {
-  Product.findAll()
-    .then((products) => {
-      res.render('admin/product-list', {
-        products,
-        pageTitle: 'Admin products',
-        path: 'admin/product-list',
-      });
-    })
+  req.user.getProducts()
+    .then((products) => res.render('admin/product-list', {
+      products,
+      pageTitle: 'Admin products',
+      path: 'admin/product-list',
+    }))
     .catch((err) => console.log(err));
 };

@@ -1,6 +1,6 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-console */
 const Product = require('../models/product');
-// const Cart = require('../models/cart');
 
 exports.getIndex = (req, res) => {
   Product.findAll()
@@ -16,13 +16,11 @@ exports.getIndex = (req, res) => {
 
 exports.getProducts = (req, res) => {
   Product.findAll()
-    .then((products) => {
-      res.render('shop/product-list', {
-        products,
-        pageTitle: 'All products',
-        path: '/product-list',
-      });
-    })
+    .then((products) => res.render('shop/product-list', {
+      products,
+      pageTitle: 'All products',
+      path: '/product-list',
+    }))
     .catch((err) => console.log(err));
 };
 
@@ -40,40 +38,93 @@ exports.getProduct = (req, res) => {
     .catch((err) => console.log(err));
 };
 
-// exports.getCart = (req, res) => {
-//   Cart.getCart((cart) => {
-//     Product.fetchAll((products) => {
-//       const cartProducts = [];
+exports.getCart = (req, res) => {
+  req.user
+    .getCart()
+    .then((cart) => cart.getProducts()
+      .then((products) => {
+        res.render('shop/cart', {
+          pageTitle: 'Your Cart',
+          path: '/cart',
+          products,
+        });
+      }))
+    .catch((err) => console.log(err));
+};
 
-//       products.forEach((product) => {
-//         const cartProductData = cart.products
-//           .find((cartProd) => cartProd.productId === product.productId);
-//         if (cartProductData) {
-//           cartProducts.push({ product, quantity: cartProductData.quantity });
-//         }
-//       });
+exports.postAddToCart = (req, res) => {
+  const { productId } = req.body;
+  let fetchedCart;
+  let quantity = 1;
 
-//       res.render('shop/cart', {
-//         pageTitle: 'Your Cart',
-//         path: '/cart',
-//         cartProducts,
-//       });
-//     });
-//   });
-// };
+  req.user.getCart()
+    .then((cart) => {
+      console.log(cart, 'WJEFKJHWEUFHNFRKJWHEFKH');
+      fetchedCart = cart;
 
-// exports.postCart = (req, res) => {
-//   const { productId } = req.body;
-//   Product.findById(productId, (product) => {
-//     Cart.addProduct(productId, product.price);
-//   });
-//   res.redirect('/cart');
-// };
+      return cart.getProducts({ where: { productId } });
+    })
+    .then((products) => {
+      let product;
 
-// exports.postDeleteCartProduct = (req, res) => {
-//   const { productId } = req.body;
-//   Product.findById(productId, (product) => {
-//     Cart.deleteProduct(productId, product.price);
-//     res.redirect('/cart');
-//   });
-// };
+      if (products.length > 0) {
+        [product] = products;
+      }
+
+      if (product) {
+        quantity = product.cartItem.quantity + 1;
+
+        return product;
+      }
+
+      return Product.findByPk(productId);
+    })
+    .then((product) => fetchedCart.addProduct(product, { through: { quantity } }))
+    .then(() => {
+      res.redirect('/cart');
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.postDeleteCartProduct = (req, res) => {
+  const { productId } = req.body;
+
+  req.user.getCart()
+    .then((cart) => cart.getProducts({ where: { productId } }))
+    .then((products) => {
+      const [product] = products;
+      return product.cartItem.destroy();
+    })
+    .then(() => res.redirect('/cart'))
+    .catch((err) => console.log(err));
+};
+
+exports.getOrder = (req, res) => {
+  res.render('shop/orders', {
+    pageTitle: 'Your Order',
+    path: '/orders',
+  });
+};
+
+exports.postOrder = (req, res) => {
+  let fetchedCart;
+  req.user.getCart()
+    .then((cart) => {
+      fetchedCart = cart;
+      return cart.getProducts();
+    })
+    .then((products) => {
+      req.user.createOrder()
+        .then((order) => {
+          const mappedProd = products.map((prod) => {
+            prod.orderItem = { quantity: prod.cartItem.quantity };
+            return prod;
+          });
+          return order.addProducts(mappedProd);
+        });
+    })
+    .then(() => {
+      res.redirect('/orders');
+    })
+    .catch((err) => console.log(err));
+};
