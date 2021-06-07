@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-shadow */
 /* eslint-disable no-console */
 const Product = require('../models/product');
@@ -100,10 +101,14 @@ exports.postDeleteCartProduct = (req, res) => {
 };
 
 exports.getOrder = (req, res) => {
-  res.render('shop/orders', {
-    pageTitle: 'Your Order',
-    path: '/orders',
-  });
+  req.user.getOrders({ include: ['products'] })
+    .then((orders) => {
+      res.render('shop/orders', {
+        pageTitle: 'Your Order',
+        path: '/orders',
+        orders,
+      });
+    });
 };
 
 exports.postOrder = (req, res) => {
@@ -124,6 +129,7 @@ exports.postOrder = (req, res) => {
         });
     })
     .then(() => {
+      fetchedCart.setProducts(null);
       res.redirect('/orders');
     })
     .catch((err) => console.log(err));

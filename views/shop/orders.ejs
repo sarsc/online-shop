@@ -4,5 +4,18 @@
   <link rel="stylesheet" href="/css/main.css">
 </header>
 <body>
+  <main>
+    <% if (orders.length > 0) { %>
+      <% orders.forEach(order => { %>
+        <h2>Order</h2>
+        <% order.products.forEach(product => { %>
+          <p><%= product.title%></p>
+          <p># <%= product.orderItem.quantity%></p>
+        <% }) %>
+      <% }) %>
+      <% } else { %>
+    <p>No order yet</p>
+    <% } %>
+  </main>
 <%- include('../includes/end.ejs') %>
   
