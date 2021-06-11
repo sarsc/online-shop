@@ -11,10 +11,10 @@
           <%= product.title %> 
         </p>
         <p>
-          <%= product.cartItem.quantity %>
+          <%= product.quantity %>
         </p>
         <form action="/delete-cart-item" method="POST" >
-          <input type="hidden" name="productId" value="<%= product.productId %>">
+          <input type="hidden" name="productId" value="<%= product._id %>">
           <button type="submit" class="btn">Delete</button>
         </form>
       <% }) %>

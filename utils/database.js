@@ -15,7 +15,7 @@ const mongodbConnect = (callback) => {
       callback();
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err, 'ilehyrliug');
       throw err;
     });
 };
