@@ -7,10 +7,10 @@
   <main>
     <% if (orders.length > 0) { %>
       <% orders.forEach(order => { %>
-        <h2>Order</h2>
-        <% order.products.forEach(product => { %>
-          <p><%= product.title%></p>
-          <p># <%= product.orderItem.quantity%></p>
+        <h2>Order Id: <%= order._id%></h2>
+        <% order.products.forEach(productData => { %>
+          <p><%= productData.product.title%></p>
+          <p># <%= productData.quantity%></p>
         <% }) %>
       <% }) %>
       <% } else { %>

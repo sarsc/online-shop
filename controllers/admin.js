@@ -1,5 +1,4 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-console */
+/* eslint-disable no-param-reassign , no-console */
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res) => {
@@ -15,13 +14,13 @@ exports.postAddProduct = (req, res) => {
   const { imageUrl } = req.body;
   const { description } = req.body;
   const { price } = req.body;
-  const { _id } = req.user;
+
   const product = new Product({
     title,
     imageUrl,
     description,
     price,
-    userId: _id,
+    userId: req.user,
   });
 
   product.save()
@@ -59,15 +58,14 @@ exports.postEditProduct = (req, res) => {
     price,
   } = req.body;
 
-  const product = new Product({
-    title,
-    imageUrl,
-    description,
-    price,
-    id: productId,
-  });
-
-  product.save()
+  Product.findById(productId)
+    .then((product) => {
+      product.title = title;
+      product.imageUrl = imageUrl;
+      product.description = description;
+      product.price = price;
+      product.save();
+    })
     .then(() => {
       res.redirect('/admin/product-list');
     })
@@ -77,7 +75,7 @@ exports.postEditProduct = (req, res) => {
 exports.postDeleteProduct = (req, res) => {
   const { productId } = req.body;
 
-  Product.deleteById(productId)
+  Product.findByIdAndRemove(productId)
     .then(() => {
       res.redirect('/admin/product-list');
     })
@@ -85,7 +83,7 @@ exports.postDeleteProduct = (req, res) => {
 };
 
 exports.getProducts = (req, res) => {
-  Product.fetchAll()
+  Product.find()
     .then((products) => res.render('admin/product-list', {
       products,
       pageTitle: 'Admin products',
