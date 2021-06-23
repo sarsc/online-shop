@@ -21,15 +21,17 @@
           <a href="/admin/product-list" class="<%= path === 'admin/product-list' ? 'active' : ''%>">Admin Products</a>
         </li>
       <% } %>
+      <% if (!isAuthenticated) { %>
       <li class="main-header__item">
         <a href="/login" class="<%= path === '/login' ? 'active' : ''%>">Login</a>
       </li>
       <li class="main-header__item">
         <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
       </li>
-      <% if (!isAuthenticated) { %>
+      <% } else { %>
         <li class="main-header__item">
           <form action="/logout" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
             <button type='submit'>Logout</button>
           </form>
         </li>

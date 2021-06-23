@@ -15,10 +15,12 @@
         </p>
         <form action="/delete-cart-item" method="POST" >
           <input type="hidden" name="productId" value="<%= product.id._id %>">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
           <button type="submit" class="btn">Delete</button>
         </form>
       <% }) %>
       <form action="/create-order" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
         <button type="submit">Order now</button>
       </form>
     <% } else  { %>

@@ -1,5 +1,4 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable no-param-reassign , no-shadow, no-console */
+/* eslint-disable no-underscore-dangle, no-param-reassign , no-shadow, no-console */
 
 const Product = require('../models/product');
 const Order = require('../models/order');
@@ -11,7 +10,7 @@ exports.getIndex = (req, res) => {
         pageTitle: 'Shop',
         products,
         path: '/',
-        isAuthenticated: req.session.isLoggedIn,
+        csrfToken: req.csrfToken(),
       });
     })
     .catch((err) => console.log(err));
@@ -23,7 +22,6 @@ exports.getProducts = (req, res) => {
       products,
       pageTitle: 'All products',
       path: '/product-list',
-      isAuthenticated: req.session.isLoggedIn,
     }))
     .catch((err) => console.log(err));
 };
@@ -37,7 +35,6 @@ exports.getProduct = (req, res) => {
         product,
         pageTitle: product.title,
         path: '',
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -53,7 +50,6 @@ exports.getCart = (req, res) => {
         pageTitle: 'Your Cart',
         path: '/cart',
         products,
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -83,13 +79,12 @@ exports.getOrders = (req, res) => {
         pageTitle: 'Your Order',
         path: '/orders',
         orders,
-        isAuthenticated: req.session.isLoggedIn,
       });
     });
 };
 
 exports.postOrder = (req, res) => {
-  const { name, _id } = req.user;
+  const { email, _id } = req.user;
   req.user
     .populate('cart.items.id')
     .execPopulate()
@@ -100,7 +95,7 @@ exports.postOrder = (req, res) => {
       }));
 
       const order = new Order({
-        user: { name, userId: _id },
+        user: { email, userId: _id },
         products,
       });
       return order.save();
