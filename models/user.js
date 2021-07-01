@@ -12,6 +12,12 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  resetToken: {
+    type: String,
+  },
+  resetTokenExpiration: {
+    type: Date,
+  },
   email: {
     type: String,
     required: true,
@@ -35,10 +41,7 @@ userSchema.methods.addToCart = function (product) {
   const { _id } = product;
 
   const cartProductIndex = this.cart.items
-    .findIndex((cartProd) => {
-      console.log(cartProd.id);
-      return `${cartProd.id}` === `${_id}`;
-    });
+    .findIndex((cartProd) => `${cartProd.id}` === `${_id}`);
 
   let updatedQuantity = 1;
   const updatedCartItems = [...this.cart.items];
