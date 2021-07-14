@@ -6,28 +6,56 @@
 <%- include('../includes/nav.ejs') %> 
 </header>
 <main>
-  <form class="product-form" action="/admin/<%= isEdited ? 'edit' : 'add' %>-product" method="POST">
+  <% if (errorMessage) {%>
+    <div class="user-message user-message--error">
+      <%= errorMessage  %>
+    </div>
+  <% } %>
+  <form class="product-form" action="/admin/<%= (isEdited || hasError) ? 'edit' : 'add' %>-product" method="POST">
     <div class="form-control">
       <label for="title">Title</label>
-      <input type="text" name="title" value="<%= isEdited ? product.title : '' %>">
+      <input 
+        type="text" 
+        name="title" 
+        value="<%= (isEdited || hasError) ? product.title : '' %>"
+        class="<% validationErrors.find(err => err.param === 'title') ? 'invalid' : ''%>"
+        >
     </div>
     <div class="form-control">
       <label for="imageUrl">Image Url</label>
-      <input type="text" name="imageUrl"  value="<%= isEdited ? product.imageUrl : '' %>">
+      <input 
+        type="text" 
+        name="imageUrl"  
+        value="<%= (isEdited || hasError) ? product.imageUrl : '' %>"
+        class="<% validationErrors.find(err => err.param === 'imageUrl') ? 'invalid' : ''%>"
+        >
     </div>
     <div class="form-control">
       <label for="description">Description</label>
-      <textarea name="description" rows="5" ><%= isEdited ? product.description : ''  %></textarea>
+      <textarea 
+        name="description" 
+        rows="5"
+        value="<%= (isEdited || hasError) ? product.description : '' %>"
+        class="<% validationErrors.find(err => err.param === 'Description') ? 'invalid' : ''%>"
+      >
+        <%= (isEdited || hasError) ? product.description : ''  %>
+      </textarea>
     </div>
     <div class="form-control">
       <label for="price">Price</label>
-      <input type="number" name="price" step="0.01" value="<%= isEdited ? product.price : '' %>">
+      <input 
+        type="number" 
+        name="price" 
+        step="0.01" 
+        value="<%= (isEdited || hasError) ? product.price : '' %>"
+        class="<% validationErrors.find(err => err.param === 'price') ? 'invalid' : ''%>"
+        >
     </div>
     <% if (isEdited) { %>
-    <input type="hidden" name="productId" value="<%= product._id %>">
+      <input type="hidden" name="productId" value="<%= product._id %>">
     <% } %>
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
-    <button type="submit"><%= isEdited ? 'Edit product' : 'Add product'%></button>
+    <button type="submit"><%= (isEdited || hasError) ? 'Edit product' : 'Add product'%></button>
   </form>
 </main>
 <%- include('../includes/end.ejs') %> 

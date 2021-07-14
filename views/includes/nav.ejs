@@ -22,12 +22,12 @@
         </li>
       <% } %>
       <% if (!isAuthenticated) { %>
-      <li class="main-header__item">
-        <a href="/login" class="<%= path === '/login' ? 'active' : ''%>">Login</a>
-      </li>
-      <li class="main-header__item">
-        <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
-      </li>
+        <li class="main-header__item">
+          <a href="/login" class="<%= path === '/login' ? 'active' : ''%>">Login</a>
+        </li>
+        <li class="main-header__item">
+          <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+        </li>
       <% } else { %>
         <li class="main-header__item">
           <form action="/logout" method="POST">
