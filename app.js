@@ -31,6 +31,7 @@ app.set('view engine', 'ejs');
 app.use(bodyPareser.urlencoded({ extended: false }));
 // forword request to public folder
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(session({
   secret: 'secret',
   resave: false,
@@ -47,10 +48,16 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then((user) => {
+      if (!user) {
+        return next();
+      }
+
       req.user = user;
       next();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      next(new Error(err));
+    });
 });
 
 app.use((req, res, next) => {
@@ -62,7 +69,18 @@ app.use((req, res, next) => {
 app.use('/admin', adminRoutes.routes);
 app.use(shopRoutes);
 app.use(authRoutes);
-app.use('/', errorsController.get404);
+
+app.use('/500', errorsController.get500);
+app.use(errorsController.get404);
+
+// eslint-disable-next-line no-unused-vars
+app.use((error, req, res, next) => { // error handeling middleware
+  res.status(500).render('500', {
+    pageTitle: 'Error',
+    path: '/500',
+    isAuthenticated: req.session.isLoggedin,
+  });
+});
 
 mongoose
   .connect(MONGODB_URI)
