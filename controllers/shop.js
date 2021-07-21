@@ -75,6 +75,7 @@ exports.postDeleteCartProduct = (req, res) => {
 
 exports.getOrders = (req, res) => {
   const { _id } = req.user;
+
   Order.find({ 'user.userId': _id })
     .then((orders) => {
       res.render('shop/orders', {
@@ -113,13 +114,25 @@ exports.postOrder = (req, res) => {
 
 exports.getInvoice = (req, res, next) => {
   const { orderId } = req.params;
-  const invoiceName = `invoice-${orderId}.pdf`;
+  const { _id } = req.user;
 
-  const invoicePath = path.join('data', 'invoices', invoiceName);
-  fs.readFile(invoicePath, (err, data) => {
-    if (err) {
-      next(err);
-    }
-    res.send(data);
-  });
+  Order.findById(orderId)
+    .then((order) => {
+      if (`${order.user.userId}` !== `${_id}`) {
+        return next(new Error('Unauthorized'));
+      }
+
+      const invoiceName = `invoice-${orderId}.pdf`;
+      const invoicePath = path.join('data', 'invoices', invoiceName);
+
+      fs.readFile(invoicePath, (err, data) => {
+        if (err) {
+          return next(err);
+        }
+        res.setHeader('Content-type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename"${invoiceName}"`);
+        res.send(data);
+      });
+    })
+    .catch((err) => next(err));
 };
