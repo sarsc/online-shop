@@ -8,6 +8,7 @@ const bodyPareser = require('body-parser');
 const mongoose = require('mongoose');
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -25,12 +26,25 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
 });
 const csrfProtection = csrf();
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${new Date().toISOString()}-${file.originalname}`);
+  },
+});
 
 app.set('view engine', 'ejs');
 
 app.use(bodyPareser.urlencoded({ extended: false }));
+app.use(multer({ storage: fileStorage }).single('image'));
+
 // forword request to public folder
 app.use(express.static(path.join(__dirname, 'public')));
+
+// forword request to image folder if it exist
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use(session({
   secret: 'secret',
@@ -74,11 +88,11 @@ app.use('/500', errorsController.get500);
 app.use(errorsController.get404);
 
 // eslint-disable-next-line no-unused-vars
-app.use((error, req, res, next) => { // error handeling middleware
+app.use((error, req, res, next) => { // error handling middleware
   res.status(500).render('500', {
     pageTitle: 'Error',
     path: '/500',
-    isAuthenticated: req.session.isLoggedin,
+    isAuthenticated: req.session.isLoggedIn,
   });
 });
 

@@ -15,10 +15,29 @@ exports.getAddProduct = (req, res) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const { title } = req.body;
-  const { imageUrl } = req.body;
-  const { description } = req.body;
-  const { price } = req.body;
+  const {
+    title,
+    description,
+    price,
+  } = req.body;
+  const image = req.file;
+
+  if (!image) {
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin/add-product',
+      isEdited: false,
+      hasError: true,
+      product: {
+        title,
+        description,
+        price,
+      },
+      errorMessage: 'Attached file is not an image',
+      validationErrors: [],
+    });
+  }
+
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -29,7 +48,6 @@ exports.postAddProduct = (req, res, next) => {
       hasError: true,
       product: {
         title,
-        imageUrl,
         description,
         price,
       },
@@ -37,6 +55,8 @@ exports.postAddProduct = (req, res, next) => {
       validationErrors: errors.array(),
     });
   }
+
+  const imageUrl = `/${image.path}`;
 
   const product = new Product({
     title,
@@ -84,14 +104,14 @@ exports.getEditProduct = (req, res, next) => {
     });
 };
 
-exports.postEditProduct = (req, res) => {
+exports.postEditProduct = (req, res, next) => {
   const {
     productId,
     title,
-    imageUrl,
     description,
     price,
   } = req.body;
+  const image = req.file;
   const { user } = req;
   const errors = validationResult(req);
 
@@ -120,16 +140,23 @@ exports.postEditProduct = (req, res) => {
       }
 
       product.title = title;
-      product.imageUrl = imageUrl;
       product.description = description;
       product.price = price;
+
+      if (image) {
+        product.imageUrl = image.path;
+      }
 
       product.save()
         .then(() => {
           res.redirect('/admin/product-list');
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postDeleteProduct = (req, res) => {

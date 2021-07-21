@@ -1,4 +1,6 @@
 /* eslint-disable no-underscore-dangle, no-param-reassign , no-shadow, no-console */
+const fs = require('fs');
+const path = require('path');
 
 const Product = require('../models/product');
 const Order = require('../models/order');
@@ -107,4 +109,17 @@ exports.postOrder = (req, res) => {
       res.redirect('/orders');
     })
     .catch((err) => console.log(err));
+};
+
+exports.getInvoice = (req, res, next) => {
+  const { orderId } = req.params;
+  const invoiceName = `invoice-${orderId}.pdf`;
+
+  const invoicePath = path.join('data', 'invoices', invoiceName);
+  fs.readFile(invoicePath, (err, data) => {
+    if (err) {
+      next(err);
+    }
+    res.send(data);
+  });
 };

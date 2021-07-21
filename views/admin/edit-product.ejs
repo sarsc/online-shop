@@ -11,7 +11,12 @@
       <%= errorMessage  %>
     </div>
   <% } %>
-  <form class="product-form" action="/admin/<%= (isEdited || hasError) ? 'edit' : 'add' %>-product" method="POST">
+  <form 
+    class="product-form" 
+    action="/admin/<%= (isEdited || hasError) ? 'edit' : 'add' %>-product" 
+    method="POST"
+    enctype="multipart/form-data"
+  >
     <div class="form-control">
       <label for="title">Title</label>
       <input 
@@ -22,6 +27,14 @@
         >
     </div>
     <div class="form-control">
+      <label for="imageUrl">Image</label>
+      <input 
+        type="file" 
+        name="image"
+        id="image"
+      >
+    </div>
+    <!-- <div class="form-control">
       <label for="imageUrl">Image Url</label>
       <input 
         type="text" 
@@ -29,7 +42,7 @@
         value="<%= (isEdited || hasError) ? product.imageUrl : '' %>"
         class="<% validationErrors.find(err => err.param === 'imageUrl') ? 'invalid' : ''%>"
         >
-    </div>
+    </div> -->
     <div class="form-control">
       <label for="description">Description</label>
       <textarea 
