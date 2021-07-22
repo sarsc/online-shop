@@ -8,10 +8,10 @@
     <% if (orders.length > 0) { %>
       <% orders.forEach(order => { %>
         <h2>Order Id: <%= order._id%></h2>
+        <a href="/orders/<%= order._id%>">Invoice</a>
         <% order.products.forEach(productData => { %>
           <p><%= productData.product.title%></p>
           <p># <%= productData.quantity%></p>
-          <a href="/orders/<%= order._id%>">Invoice</a>
         <% }) %>
       <% }) %>
       <% } else { %>

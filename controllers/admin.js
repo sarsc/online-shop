@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign , no-console */
 const { validationResult } = require('express-validator/check');
-
+const fileHelper = require('../utils/file');
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res) => {
@@ -144,7 +144,10 @@ exports.postEditProduct = (req, res, next) => {
       product.price = price;
 
       if (image) {
-        product.imageUrl = image.path;
+        console.log(image.path, product.imageUrl, 'edit');
+
+        fileHelper.deleteFile(product.imageUrl);
+        product.imageUrl = `/${image.path}`;
       }
 
       product.save()
@@ -159,15 +162,27 @@ exports.postEditProduct = (req, res, next) => {
     });
 };
 
-exports.postDeleteProduct = (req, res) => {
+exports.postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
   const { user } = req;
 
-  Product.deleteOne({ _id: productId, userId: user._id })
+  Product.findById(productId)
+    .then((product) => {
+      if (!product) {
+        return new Error('Product not found.');
+      }
+      fileHelper.deleteFile(`${product.imageUrl}`);
+
+      return Product.deleteOne({ _id: productId, userId: user._id });
+    })
     .then(() => {
       res.redirect('/admin/product-list');
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getProducts = (req, res) => {
