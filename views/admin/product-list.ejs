@@ -1,5 +1,4 @@
 <%- include('../includes/head.ejs') %>
-  <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
   <%- include('../includes/nav.ejs') %> 
@@ -8,29 +7,25 @@
     <h1>List of products</h1>
     <% if (products.length > 0) { %>
       <% products.forEach(product => { %>
-        <div class="grid">
-          <article class="card product-item">
-             <header class="card__header">
-                 <h1 class="product__title"><%= product.title %></h1>
-             </header>
-             <div class="card__image">
-                 <img   src="<%=product.imageUrl%>" alt="A Book">
-             </div>
-             <div class="card__content">
-                 <h2 class="product__price"><%= product.price %></h2>
-                 <p class="product__description"><%= product.description %></p>
-             </div>
-             <div class="card__actions">
-                 <button class="btn">
+        <div class="ui card">
+          <div class="image">
+            <img src="<%=product.imageUrl%>" alt="A Book">
+          </div>
+          <div class="content">
+            <h1 class="header"><%= product.title %></h1>
+            <p class="meta">£<%= product.price %></h2>
+            <p class="description"><%= product.description %></p>
+          </div>
+             <div class="">
+                 <button  class="tiny ui orange basic button">
                   <a href="/admin/edit-product/<%= product._id %>?edit=true">Edit</a>
                 </button>
                 <form action="/admin/delete-product" method="POST">
                   <input type="hidden" name="productId" value="<%= product._id %>">
                   <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
-                  <button class="btn" type="submit">Delete</button>
+                  <button class="small ui negative button" type="submit">Delete</button>
                 </form>
              </div>
-           </article>
         </div>
     <% }) %>
     <% } %>

@@ -1,31 +1,39 @@
 <%- include('../includes/head.ejs') %>
 </head>
 <%- include('../includes/nav.ejs') %>
-  <link rel="stylesheet" href="/css/main.css">
 </header>
 <body>
-  <div>
-    <% if (products.length > 0) { %>
-      <% products.forEach(product => { %>
-        <p>
-          <%= product.id.title %>
-        </p>
-        <p>
-          <%= product.id.quantity %>
-        </p>
-        <form action="/delete-cart-item" method="POST" >
-          <input type="hidden" name="productId" value="<%= product.id._id %>">
+  <main>
+    <div class="ui divided items">
+      <% if (products.length > 0) { %>
+        <% products.forEach(product => { %>
+          <div class="item">
+            <div class="image">
+              <img src="<%=product.id.imageUrl%>">
+            </div>
+            <div class="content">
+              <p class="header"><%= product.id.title %></p>
+              <p class="meta">Quantity: <%= product.quantity %></p>
+              <div class="extra">
+                <div class="ui right floated">
+                  <form action="/delete-cart-item" method="POST" class="ui right floated">
+                    <input type="hidden" name="productId" value="<%= product.id._id %>">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
+                    <button class="negative ui button" type="submit" class="btn">Delete</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+        <form action="/create-order" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
-          <button type="submit" class="btn">Delete</button>
+          <button  class="positive ui button" type="submit">Order now</button>
         </form>
-      <% }) %>
-      <form action="/create-order" method="POST">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
-        <button type="submit">Order now</button>
-      </form>
-    <% } else  { %>
-      <p>Cart is empty</p>
-    <% } %>
+      <% } else { %>
+        <p>Cart is empty</p>
+      <% } %>
+    </main>
   </div>
 <%- include('../includes/end.ejs') %>
   

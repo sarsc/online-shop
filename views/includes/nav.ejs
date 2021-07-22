@@ -1,40 +1,24 @@
 <header class="main-header">
-  <nav class="main-header__nav">
-    <ul class="main-header__item-list">
-      <li class="main-header__item">
-        <a class="<%= path === '/' ? 'active' : ''%>" href="/">Shop</a>
-      </li>
-      <li class="main-header__item">
-        <a href="/product-list" class="<%= path === '/product-list' ? 'active' : ''%>">Products</a>
-      </li>
-      <% if (isAuthenticated) { %>
-        <li class="main-header__item">
-          <a href="/cart" class="<%= path === '/cart' ? 'active' : ''%>">Cart</a>
-        </li>
-        <li class="main-header__item">
-          <a href="/orders" class="<%= path === '/orders' ? 'active' : ''%>">Orders</a>
-        </li>
-        <li class="main-header__item">
-          <a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : ''%>">Add Product</a>
-        </li>
-        <li class="main-header__item">
-          <a href="/admin/product-list" class="<%= path === 'admin/product-list' ? 'active' : ''%>">Admin Products</a>
-        </li>
-      <% } %>
-      <% if (!isAuthenticated) { %>
-        <li class="main-header__item">
-          <a href="/login" class="<%= path === '/login' ? 'active' : ''%>">Login</a>
-        </li>
-        <li class="main-header__item">
-          <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
-        </li>
-      <% } else { %>
-        <li class="main-header__item">
-          <form action="/logout" method="POST">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
-            <button type='submit'>Logout</button>
-          </form>
-        </li>
-      <% } %>
-    </ul>
+  <nav class="ui secondary pointing menu">
+    <a class="item <%= path === '/' ? 'active' : ''%>" href="/">Shop</a>
+    <a href="/product-list" class="item <%= path === '/product-list' ? 'active' : ''%>">Products</a>
+    <% if (isAuthenticated) { %>
+      <a href="/cart" class="item <%= path === '/cart' ? 'active' : ''%>">Cart</a>
+      <a href="/orders" class="item <%= path === '/orders' ? 'active' : ''%>">Orders</a>
+      <a href="/admin/add-product" class="item <%= path === '/admin/add-product' ? 'active' : ''%>">Add Product</a>
+      <a href="/admin/product-list" class="item <%= path === 'admin/product-list' ? 'active' : ''%>">Admin Products</a>
+    <% } %>
+    <% if (!isAuthenticated) { %>
+      <div class="right menu" menu>
+        <a href="/login" class="item <%= path === '/login' ? 'active' : ''%>">Login</a>
+        <a class="item <%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+      </div>
+    <% } else { %>
+      <div class="right menu">
+        <form action="/logout" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
+          <button  class="ui item" type='submit'>Logout</button>
+        </form>
+      </div>
+    <% } %>
   </nav>
